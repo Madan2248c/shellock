@@ -35,10 +35,6 @@ updates:
         update-types:
           - "major"
     # Security updates are always created immediately
-    ignore:
-      # Ignore pre-release versions
-      - dependency-name: "*"
-        update-types: ["version-update:semver-prerelease"]
 
   # GitHub Actions
   - package-ecosystem: "github-actions"
