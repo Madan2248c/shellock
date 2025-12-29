@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "shellock"
-version = "0.1.0"
+version = "0.1.1"
 description = "Secure encryption for configuration files using AES-256-GCM + Argon2id"
 readme = "README.md"
 requires-python = ">=3.8"

@@ -5,7 +5,7 @@ This package provides both a CLI and Python API for encrypting and decrypting
 configuration files with strong cryptographic defaults.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 __author__ = "Madan Gopal"
 __email__ = "madangopalboddu123@gmail.com"
 
