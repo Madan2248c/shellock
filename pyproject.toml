@@ -1,0 +1,170 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "shellock"
+version = "0.1.0"
+description = "Secure encryption for configuration files using AES-256-GCM + Argon2id"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+authors = [
+    {name = "Madan Gopal", email = "madangopalboddu123@gmail.com"}
+]
+keywords = ["encryption", "security", "configuration", "files", "crypto"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Security :: Cryptography",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+dependencies = [
+    "cryptography>=41.0.0",
+    "click>=8.0.0",
+    "rich>=13.0.0",
+]
+
+[project.optional-dependencies]
+secure = [
+    "zeroize>=1.0.0",  # Requires Rust toolchain
+]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "hypothesis>=6.0",
+    "ruff>=0.1.0",
+    "mypy>=1.0",
+    "pre-commit>=3.0",
+]
+
+[project.scripts]
+shellock = "shellock.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/Madan2248c/shellock"
+Documentation = "https://github.com/Madan2248c/shellock#readme"
+Repository = "https://github.com/Madan2248c/shellock"
+"Bug Tracker" = "https://github.com/Madan2248c/shellock/issues"
+
+[tool.hatch.version]
+path = "shellock/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["shellock"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py38"
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "F",   # pyflakes
+    "W",   # pycodestyle warnings
+    "C90", # mccabe complexity
+    "I",   # isort
+    "N",   # pep8-naming
+    "UP",  # pyupgrade
+    "S",   # bandit security
+    "B",   # flake8-bugbear
+    "A",   # flake8-builtins
+    "C4",  # flake8-comprehensions
+    "T20", # flake8-print
+]
+ignore = [
+    "S101", # Use of assert detected (we use assert in tests)
+    "S603", # subprocess call: check for execution of untrusted input
+    "S607", # Starting a process with a partial executable path
+    "B904", # Within except clause, raise from err (intentionally omitted for security)
+    "E501", # Line too long (handled by formatter, allow in docstrings)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101", "S105", "S106", "S108"]  # Allow assert, hardcoded passwords in tests
+
+[tool.mypy]
+python_version = "3.8"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+addopts = [
+    "--cov=shellock",
+    "--cov-report=html",
+    "--cov-report=term-missing",
+    "--cov-report=xml",
+    "--strict-markers",
+    "--strict-config",
+]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "security: marks tests as security-focused",
+    "property: marks property-based tests",
+]
+
+[tool.coverage.run]
+source = ["shellock"]
+omit = [
+    "*/tests/*",
+    "*/test_*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]
+
+[tool.hypothesis]
+# Hypothesis profiles for property-based testing
+# Use with: pytest --hypothesis-profile=<profile>
+
+[tool.hypothesis.profiles.dev]
+# Fast feedback during development
+max_examples = 20
+deadline = 2000
+
+[tool.hypothesis.profiles.ci]
+# Thorough testing in CI
+max_examples = 100
+deadline = 5000
+
+[tool.hypothesis.profiles.security]
+# Extended testing for security-critical code
+max_examples = 1000
+deadline = 30000
+
+[tool.bandit]
+exclude_dirs = ["tests", ".venv", "venv"]
+skips = ["B101"]  # Skip assert warnings
